@@ -1,0 +1,4 @@
+npx sequelize-auto -h localhost -d forex_trading -u laravel_user -x $DB_PASSWORD -p 5432 -e postgres -o "./src/models" -l esm
+
+redis-cli FLUSHDB
+
