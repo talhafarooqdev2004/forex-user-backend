@@ -66,7 +66,7 @@ export class UserService {
     }
 
     async handleGoogleAuth(dto) {
-        const { googleId, displayName, email } = dto;
+        const { googleId, displayName, email, image } = dto;
 
         // Validate email
         if (!email) {
@@ -84,6 +84,11 @@ export class UserService {
                 await this.userRepository.updateUserNames(existingUser.id, firstName, lastName);
                 existingUser = await this.userRepository.findById(existingUser.id);
             }
+            // Update image if provided and user doesn't have one
+            if (image && !existingUser.image) {
+                await this.userRepository.update(existingUser.id, { image });
+                existingUser = await this.userRepository.findById(existingUser.id);
+            }
             return this._generateToken(existingUser);
         }
 
@@ -94,7 +99,8 @@ export class UserService {
                 existingUser.id, 
                 googleId, 
                 firstName, 
-                lastName
+                lastName,
+                image
             );
             return this._generateToken(updatedUser);
         }
@@ -107,6 +113,7 @@ export class UserService {
             email: email.toLowerCase(),
             password: null, // Google users don't have passwords
             gender: null, // Can be updated later
+            image: image || null,
         });
 
         return this._generateToken(newUser);
@@ -131,7 +138,11 @@ export class UserService {
     }
 
     _generateToken(user) {
-        const payload = { id: user.id, email: user.email };
+        const payload = { 
+            id: user.id, 
+            email: user.email, 
+            role: user.role || 'user' 
+        };
         const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1d' });
         return token;
     }

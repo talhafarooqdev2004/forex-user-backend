@@ -37,8 +37,9 @@ app.use(helmet({
     crossOriginResourcePolicy: { policy: "cross-origin" },
     crossOriginEmbedderPolicy: false,
 }));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// Increase body parser limit to handle base64 image uploads (10MB)
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 app.use(session({
     secret: process.env.SESSION_SECRET || "secret",

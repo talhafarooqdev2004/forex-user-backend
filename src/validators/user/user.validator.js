@@ -32,6 +32,15 @@ export const UserLoginSchema = Joi.object({
 });
 
 export const updateUserSchema = Joi.object({
-    name: Joi.string().min(2).max(100),
-    email: Joi.string().email()
+    firstName: Joi.string().min(2).max(50),
+    lastName: Joi.string().min(2).max(50),
+    email: Joi.string().email(),
+    gender: Joi.string().valid('male', 'female', 'other').allow(null, ''),
+    phone: Joi.string().max(20).allow(null, ''),
+    // Allow both URLs and base64 data URLs (data:image/...)
+    // Base64 images can be quite long, so we allow up to 2MB of base64 data (~1.5MB actual image)
+    image: Joi.alternatives().try(
+        Joi.string().uri().max(2000), // Regular URLs (e.g., Google profile images)
+        Joi.string().pattern(/^data:image\/(jpeg|jpg|png|gif|webp);base64,/).max(2000000) // Base64 data URLs (up to ~2MB)
+    ).allow(null, '')
 }).min(1);

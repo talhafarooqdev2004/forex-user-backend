@@ -41,6 +41,10 @@ export class UserGoogleAuthLoginRequestDTO {
         this.email = user.emails && user.emails.length > 0 
             ? user.emails[0].value 
             : user.email || null;
+        // Extract profile picture from Google profile
+        this.image = user.photos && user.photos.length > 0 
+            ? user.photos[0].value 
+            : null;
     }
 
     toServiceFormat() {
@@ -48,6 +52,7 @@ export class UserGoogleAuthLoginRequestDTO {
             googleId: this.googleId,
             displayName: this.displayName,
             email: this.email,
+            image: this.image,
         };
     }
 }

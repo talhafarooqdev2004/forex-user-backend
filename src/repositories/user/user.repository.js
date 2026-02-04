@@ -58,7 +58,9 @@ export class UserRepository {
             email: userData.email,
             password: userData.password,
             gender: userData.gender,
+            phone: userData.phone ?? null,
             googleId: userData.googleId ?? null,
+            image: userData.image ?? null,
         });
 
         return newUser.toJSON();
@@ -107,28 +109,37 @@ export class UserRepository {
     }
 
     async update(id, userData) {
-        const fields = [];
-        const values = [];
-        let paramIndex = 1;
-
-        if (userData.name) {
-            fields.push(`name = $${paramIndex++}`);
-            values.push(userData.name);
+        const updateData = {};
+        
+        if (userData.firstName !== undefined) {
+            updateData.firstName = userData.firstName;
         }
-        if (userData.email) {
-            fields.push(`email = $${paramIndex++}`);
-            values.push(userData.email);
+        if (userData.lastName !== undefined) {
+            updateData.lastName = userData.lastName;
+        }
+        if (userData.email !== undefined) {
+            updateData.email = userData.email;
+        }
+        if (userData.gender !== undefined) {
+            updateData.gender = userData.gender || null;
+        }
+        if (userData.phone !== undefined) {
+            updateData.phone = userData.phone || null;
+        }
+        if (userData.image !== undefined) {
+            updateData.image = userData.image || null;
         }
 
-        values.push(id);
+        await User.update(updateData, {
+            where: { id: id }
+        });
 
-        const [result] = await sequelize.query(
-            `UPDATE users SET ${fields.join(', ')}, updated_at = NOW() 
-       WHERE id = $${paramIndex} 
-       RETURNING id, name, email, created_at`,
-            { bind: values }
-        );
-        return result[0];
+        const updatedUser = await User.findByPk(id, {
+            attributes: {
+                exclude: ['password'],
+            },
+        });
+        return updatedUser ? updatedUser.toJSON() : null;
     }
 
     async delete(id) {

@@ -84,6 +84,19 @@ export class UserController {
         }
     }
 
+    updateCurrentUser = async (req, res, next) => {
+        try {
+            // Update current user's own profile (self-update)
+            const userId = req.user.id;
+            const user = await this.userService.updateUser(userId, req.body);
+            const responseData = new UserResponseDTO(user);
+
+            return res.json(successResponse('Profile updated successfully', responseData));
+        } catch (error) {
+            next(error);
+        }
+    };
+
     handleGoogleAuth = async (req, res, next) => {
         if (!req.user) {
             return next(new ApiError(401, 'Social authentication failed'));
@@ -106,9 +119,10 @@ export class UserController {
                 console.warn('Cache flush failed (non-blocking):', err.message);
             });
 
-            // Use environment variable for frontend URL, fallback to common ports
-            const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3001';
-            const frontendCallbackUrl = `${frontendUrl}/auth/google/callback?token=${token}`;
+            // Use environment variable for admin dashboard URL (forex-admin where callback is)
+            // Default to localhost:3000 for forex-admin (shared dashboard)
+            const adminDashboardUrl = process.env.ADMIN_DASHBOARD_URL || process.env.FRONTEND_URL || 'http://localhost:3000';
+            const frontendCallbackUrl = `${adminDashboardUrl}/auth/google/callback?token=${token}`;
             
             console.log('Redirecting to:', frontendCallbackUrl);
             return res.redirect(frontendCallbackUrl);

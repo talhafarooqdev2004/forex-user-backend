@@ -5,6 +5,8 @@ export class UserResponseDTO {
         this.lastName = user.lastName || user.last_name;
         this.email = user.email;
         this.gender = user.gender;
+        this.phone = user.phone || null;
+        this.image = user.image || null;
         this.createdAt = user.createdAt || user.created_at;
         this.updatedAt = user.updatedAt || user.updated_at;
     }

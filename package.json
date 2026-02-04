@@ -5,7 +5,9 @@
     "scripts": {
         "dev": "nodemon --experimental-loader ./alias-loader.js server.js",
         "start": "node --experimental-loader ./alias-loader.js server.js",
-        "test": "jest"
+        "test": "jest",
+        "migrate": "node --experimental-loader ./alias-loader.js migrate.js",
+        "create-admin": "node --experimental-loader ./alias-loader.js create-admin-user.js"
     },
     "dependencies": {
         "@paypal/checkout-server-sdk": "^1.0.3",

@@ -65,6 +65,22 @@ export const User = (sequelize) => {
                 allowNull: true,
                 field: 'apple_id',
             },
+
+            role: {
+                type: DataTypes.ENUM('user', 'admin'),
+                allowNull: false,
+                defaultValue: 'user',
+            },
+
+            phone: {
+                type: DataTypes.STRING(20),
+                allowNull: true,
+            },
+
+            image: {
+                type: DataTypes.TEXT,
+                allowNull: true,
+            },
         },
         {
             tableName: 'users',

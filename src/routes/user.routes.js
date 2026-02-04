@@ -38,6 +38,7 @@ router.get(
 
 // Protected routes (require authentication)
 router.get('/me', authMiddleware, userController.getCurrentUser);
+router.put('/me', authMiddleware, validate(updateUserSchema), userController.updateCurrentUser);
 
 router.get('/', userController.getAllUsers);
 router.get('/:id', userController.getUserById);
